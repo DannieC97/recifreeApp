@@ -126,7 +126,7 @@ export default function CreateRecipes() {
           ingredients
         };
       
-        axios.post('/addRecipes', newRecipe)
+        axios.post('http://localhost:5000/addRecipes', newRecipe)
           .then((res) => {
             console.log(res.data);
             // Show a success message or alert if the recipe was added successfully

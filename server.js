@@ -7,6 +7,7 @@ const cors = require('cors');
 app.use(express.json());
 app.use(cors());
 
+
 mongoose.connect(
     'mongodb+srv://danielchabi97:OvcxlbSIFtIFTOEc@cluster0.scrqm1m.mongodb.net/?retryWrites=true&w=majority',
     {
@@ -138,7 +139,7 @@ app.get('/getRecipes', async (req, res) => {
 
   
 // Start the server
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });

@@ -16,7 +16,7 @@ export default function RecipeCards(props) {
 
     useEffect(() => {
         const getRecipes = async () => {
-            const data = await axios.get("/getRecipes")
+            const data = await axios.get("http://localhost:5000/getRecipes")
             
 
             if(props.isRecent){
@@ -43,7 +43,7 @@ export default function RecipeCards(props) {
         }
     
         try {
-          await axios.delete(`/deleteRecipes/${recipeId}`);
+          await axios.delete(`http://localhost:5000/deleteRecipes/${recipeId}`);
           window.location.reload(false);
         } catch (err) {
           console.error(err);
@@ -57,64 +57,52 @@ export default function RecipeCards(props) {
             </div>
         )
     } else {
-        console.log("Recipes Loaded!");
-        //console.log(recipes);
-        return (
-          <div>
-            <ul className="recipeContainer">
-              {recipes.map((item) => {
-                return (
-                  <div className="recipe_box" key={item.id}>
-                    <div className="panel" key={item.id + 1}>
-                      <div className="topPanel" key={item.id + 2}>
-                        <img
-                          className="panelImg"
-                          src={item.img_link
-                          }
-                          onClick={() => {
-                            navigate(`/recipepage/${item._id}`);
-                          }}
-                          key={item.id + 3}
-                        />
-                        <div className="bottomPanel" key={item.id + 4}>
-                          <h3 className="recipeName" key={item.id + 5}>
-                            {item.name}
-                          </h3>
-                          <div>
-                            <div className="description" key={item.id + 6}>
-                              <h5 className="desText" key={item.id + 7}>
-                                {item.description}
-                              </h5>
+      console.log("Recipes Loaded!");
+      return (
+        <div>
+          <ul className="recipeContainer">
+            {recipes.map((item) => {
+              return (
+                <div className="recipe_box" key={item._id}>
+                  <div className="panel">
+                    <div className="topPanel">
+                      <img
+                        className="panelImg"
+                        src={item.img_link}
+                        onClick={() => {
+                          navigate(`/recipepage/${item._id}`);
+                        }}
+                      />
+                      <div className="bottomPanel">
+                        <h3 className="recipeName">{item.name}</h3>
+                        <div>
+                          <div className="description">
+                            <h5 className="desText">{item.description}</h5>
+                          </div>
+                          <div className="timeFlex">
+                            <img className="timer" src={timer} />
+                            <div className="timeText">
+                              <p>{item.time}</p>
                             </div>
-                            <div className="timeFlex" key={item.id + 8}>
-                              <img
-                                className="timer"
-                                src={timer}
-                                key={item.id + 9}
-                              />
-                              <div className="timeText" key={item.id + 10}>
-                                <p>{item.time}</p>
-                              </div>
-                              <button
-                                key={item.id + 11}
-                                className="delete"
-                                onClick={() => {
-                                  handleDeleteRecipe(item._id);
-                                  window.location.reload(false);
-                                }}
-                              >
-                                <strong>X</strong>
-                              </button>
-                            </div>
+                            <button
+                              className="delete"
+                              onClick={() => {
+                                handleDeleteRecipe(item._id);
+                                window.location.reload(false);
+                              }}
+                            >
+                              <strong>X</strong>
+                            </button>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                );
-              })}
-            </ul>
-          </div>
-        );
-      }
+                </div>
+              );
+            })}
+          </ul>
+        </div>
+      );
+    }
 }

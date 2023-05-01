@@ -12,7 +12,7 @@ export default function RecipePage() {
 
     useEffect(() => {
         async function fetchData() {
-            const { data } = await axios.get(`/recipes/${id}`)
+            const { data } = await axios.get(`http://localhost:5000/recipes/${id}`)
             setRecipeInfo(data)
             console.log(data)         
         }
@@ -47,13 +47,13 @@ export default function RecipePage() {
                         
                         <h3>Ingredients</h3>
                         <div className="list_box">
-                            <ul className="listItem">
-                                {recipeInfo.ingredients && recipeInfo.ingredients.map(item => {
-                                    return (
-                                        <li>{item.name} {item.quantity}</li>
-                                    )
-                                })}
-                            </ul>
+                        <ul className="listItem">
+    {recipeInfo.ingredients && recipeInfo.ingredients.map((item, index) => {
+        return (
+            <li key={index}>{item.name} {item.quantity}</li>
+        )
+    })}
+</ul>
 
                         </div>
                     </div>
