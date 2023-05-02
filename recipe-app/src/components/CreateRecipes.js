@@ -6,6 +6,9 @@ import AsyncSelect from "react-select/async";
 import ListofIngredients from "./ListofIngredients";
 //import {useActionKeyContext, useDispatchContext, useIngredientsDispatchContext} from "./context/RecipeContext";
 import {useNavigate} from "react-router-dom";
+import styles from './Form.module.css';
+
+
 
 
 export default function CreateRecipes() {
@@ -26,12 +29,27 @@ export default function CreateRecipes() {
     const [change, setChange] = useState(false)
     //Show ingredient Submit
     const [showIngButt, setShowIngButt] = useState(false)
-
+    let [steps, setSteps] = useState(['']);
     //const [recipeId, setRecipeId] = useState(0)
     //const dispatch = useDispatchContext()
     //const ingredientDispatch = useIngredientsDispatchContext()
     //const ACTION = useActionKeyContext()
 
+
+    const handleStepsChange = (e, index) => {
+        const newSteps = [...steps];
+        newSteps[index] = e.target.value;
+        setSteps(newSteps);
+    };
+    const handleKeyPress = (e, index) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            setSteps([...steps, '']);
+        }
+    };
+    function addStep() {
+        setSteps(prevSteps => [...prevSteps, ""]);
+    }
 
     //apikey
     const apiKey = '135105a81ad44fc89fc31589dcff5303'
@@ -65,17 +83,17 @@ export default function CreateRecipes() {
     }, [query])
 
     //fetches the api for the nutritional information
-    useEffect(async () => {
-        if (ingredientID !== null) {
-            const data = await axios.get(`https://api.spoonacular.com/food/ingredients/${ingredientID}/information?apiKey=${apiKey}&amount=${amount}`)
-            let obj = {
-                ingredient: query,
-                quantity: amount,
+    // useEffect(async () => {
+    //     if (ingredientID !== null) {
+    //         const data = await axios.get(`https://api.spoonacular.com/food/ingredients/${ingredientID}/information?apiKey=${apiKey}&amount=${amount}`)
+    //         let obj = {
+    //             ingredient: query,
+    //             quantity: amount,
                 
-            }
-            setUserIngredientList(prev => prev.concat(obj))
-        }
-    }, [change])
+    //         }
+    //         setUserIngredientList(prev => prev.concat(obj))
+    //     }
+    // }, [change])
 
     // useEffect(async () => {
     //     await axios.get(`https://capstone-project-ttp.herokuapp.com/recipe/GetRecent`).then(val => setRecipeId(val.data.id))
@@ -86,14 +104,14 @@ export default function CreateRecipes() {
 
     //submit handler for add ingredients button
     function submitHandler(e) {
-        e.preventDefault()
-        setAmount(e.target[1].value)
-        console.log(e.target[1].value)
-        console.log(ingredientsList)
-        e.target[1].value = ""
-        setChange(prev => !prev)
-        console.log("Hi");
-        console.log(userIngredientList)
+        e.preventDefault();
+        const quantityInput = e.target[1].value.trim(); // Trim the input to remove any extra spaces
+        let obj = {
+            ingredient: query,
+            quantity: quantityInput,
+        }
+        setUserIngredientList(prev => prev.concat(obj));
+        e.target[1].value = "";
     }
 
     //Submitting a recipe
@@ -103,8 +121,7 @@ export default function CreateRecipes() {
         const description = e.target[1].value;
         const level_of_diff = e.target[2].value;
         const time = e.target[3].value;
-        const steps = e.target[4].value;
-        const img = e.target[5].value;
+        const img = e.target[5 + steps.length].value;
       
         if (!name || !description || !level_of_diff || !time || !steps || !img) {
           // Show an error message or alert if any of the required fields are missing
@@ -186,41 +203,12 @@ export default function CreateRecipes() {
 
     return (
         <div>
-            <Navbar/>
-            <div className="wrapperForm">
-                <form className="myForm" onSubmit={recipeSubmit}>
-                    <div className="input_div">
-                        <label className="name_txt">Recipe Name: </label>
-                        <input className="recipe_name_box" type="text" name="name" onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}></input>
-                    </div>
-                    <div className="input_div">
-                        <label className="description_text">Description: </label>
-                        <textarea className="description_box" type="text" name="description"></textarea>
-                    </div>
-                    <div className="input_div">
-                        <label>Difficulty Level: </label>
-                        <input className="diiffuculty_box" type="text" name="level_of_diff" onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}></input>
-                    </div>
-                    <div className="input_div">
-                        <label>Time: </label>
-                        <input className="time_box" type="text" name="time" onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}></input>
-                    </div>
-                    <div className="input_div">
-                        <label>Steps: </label>
-                        <textarea  className="steps_box" type="text" name="steps"></textarea >
-                    </div>
-                    <div className="input_div">
-                        <label>Image Link </label>
-                        <input className="image_box" type="text" name="image" onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}></input>
-                    </div>
-                    <div className="input_div">
-                        <input className="submitBtn" type="submit" value="Submit"></input>
-                    </div>
-                </form>
-                <form className="ingredients_input" onSubmit={submitHandler}>
+            <Navbar />
+            <div className={styles.wrapperForm}>
+            <div className={styles.formContainer}>
+                <form className={styles.ingredientsInput} onSubmit={submitHandler}>
                     <div>
-                        <label className="ingredients">Ingredients: </label>
-                        {/* <input type="text" name="ingredients" onChange={handleSearch}></input> */}
+                        <label className={styles.ingredients}>Ingredients: </label>
                         <AsyncSelect
                             styles={customStyles}
                             loadOptions={loadOptions}
@@ -229,22 +217,71 @@ export default function CreateRecipes() {
                             getOptionLabel={data => data.name}
                         />
                     </div>
-                    <div className="quantity_box">
-                        <label className="quanLbl">Quantity: </label>
-                        <input className="quanInpt" type="number" min={0}/>
-                        <button className="add_btn" type="submit" value="Submit">Add</button>
+                    <div className={styles.quantityBox}>
+                    <div className={styles.quantityInputLabelContainer}>
+                                <label className={styles.quanLbl}>Quantity: </label>
+                                <input className={styles.quanInpt} type="text" />
+                            </div>
+                        <button className={styles.addBtn} type="submit" value="Submit">Add</button>
                     </div>
                     <div>
-
-                        <ListofIngredients data={userIngredientList} keyId={ingredientID}/>
-
-
+                        <ListofIngredients data={userIngredientList} keyId={ingredientID} />
                     </div>
-                    {showIngButt &&
-                        <button className="add_btn" onClick={addIngredientHandler}>ADD INGREDIENT
-                            LIST!</button>}
+                    {showIngButt && (
+                        <button className={styles.addBtn} onClick={addIngredientHandler}>
+                            ADD INGREDIENT LIST!
+                        </button>
+                    )}
                 </form>
+                <form className={styles.myForm} onSubmit={recipeSubmit}>
+                    <div className={styles.inputDiv}>
+                        <label className={styles.nameTxt}>Recipe Name: </label>
+                        <input className={styles.recipeNameBox} type="text" name="name" onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }} />
+                    </div>
+                    <div className={styles.inputDiv}>
+                        <label className={styles.descriptionText}>Description: </label>
+                        <textarea className={styles.descriptionBox} type="text" name="description" />
+                    </div>
+                    <div className={styles.inputDiv}>
+    <label>Difficulty Level: </label>
+    <select className={styles.difficultyBox} name="level_of_diff">
+        <option value="Easy">Easy</option>
+        <option value="Medium">Medium</option>
+        <option value="Hard">Hard</option>
+    </select>
+</div>
+                    <div className={styles.inputDiv}>
+                        <label>Time: </label>
+                        <input className={styles.timeBox} type="text" name="time" onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }} />
+                    </div>
+
+                    <div className={styles.inputDiv}>
+                <label>Steps: </label>
+                <ol className={styles.stepsList}>
+                    {steps.map((step, index) => (
+                        <li key={index}>
+                            <input
+                                className={styles.stepsBox}
+                                type="text"
+                                value={step}
+                                onChange={(e) => handleStepsChange(e, index)}
+                                
+                            />
+                        </li>
+                    ))}
+                </ol>
+                <button className={styles.addBtn} onClick={addStep}>Add Step</button>
+            </div>
+                    <div className={styles.inputDiv}>
+                        <label>Image Link </label>
+                        <input className={styles.imageBox} type="text" name="image" onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }} />
+                    </div>
+                    <div className={styles.inputDiv}>
+                        <input className={styles.submitBtn} type="submit" value="Submit" />
+                    </div>
+                </form>
+                </div>
             </div>
         </div>
-    )
+    );
 }

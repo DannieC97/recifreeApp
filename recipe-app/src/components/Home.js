@@ -6,7 +6,7 @@ import RecipeCards from "./RecipeCards"
 import axios from "axios";
 export default function Home() {
     console.log("Home component rendered");
-    console.log("yo tes");
+    console.log("yo testyyy");
 
     // useEffect(() => {
     //     async function fetchData() {

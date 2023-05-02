@@ -42,7 +42,7 @@ const ingredientSchema = new mongoose.Schema({
     description: { type: String, required: true },
     difficulty_level: { type: String, required: true },
     time: { type: String, required: true },
-    steps: { type: String, required: true },
+    steps: { type: [String], required: true }, // changed to [String]
     img_link: { type: String, required: true },
     ingredients: [ingredientSchema]
   });
